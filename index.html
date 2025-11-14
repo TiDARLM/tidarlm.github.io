@@ -284,6 +284,7 @@ function OptanonWrapper() {
                   </span>
                     <span class="eql-cntrb"><small><br><sup>1</sup> affiliated with Univerisity of Chicago. Work done during Jingyu's internship at NVIDIA </small></span>
                     <span class="eql-cntrb"><small><br><sup>2</sup> affiliated with Georgia Institute of Technology. Work done during Zhifan's internship at NVIDIA </small></span>
+                    <span class="eql-cntrb"><small><br><strong>(SGLang inference code will be released soon)</strong></small></span>
                   </div>
 
                 <div class="column has-text-centered" style="margin-bottom: 0;">
@@ -822,391 +823,6 @@ function OptanonWrapper() {
   }
 </script>
 
-
-<!-- Bar Plot Section -->
-<section class="section" style="padding: 1.5rem 1.5rem; background-color: #f5f5f5;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column">
-        <h2 class="title is-4 has-text-centered" style="margin-bottom: 1rem;">
-          Time Needed to Complete A Benchmark
-        </h2>
-        
-        <!-- Legend -->
-        <div class="columns is-centered" style="margin-bottom: 1rem;">
-          <div class="column is-narrow">
-            <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center;">
-              <div style="display: flex; align-items: center; gap: 0.4rem;">
-                <div style="width: 16px; height: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 3px;"></div>
-                <span id="legend-model1" style="font-weight: 600; font-size: 0.9rem;">Baseline</span>
-              </div>
-              <div style="display: flex; align-items: center; gap: 0.4rem;">
-                <div style="width: 16px; height: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 3px;"></div>
-                <span id="legend-model2" style="font-weight: 600; font-size: 0.9rem;">DLER</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bar Chart Container -->
-        <div id="barChartContainer" class="box" style="background-color: white; padding: 1.25rem 1.5rem;">
-          <!-- X-axis (top) -->
-          <div id="xAxisTop" class="x-axis-top"></div>
-          <!-- Bar Chart -->
-          <div id="barChart"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<style>
-  .bar-row {
-    margin-bottom: 1.2rem;
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-
-  .bar-row.animated {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .bar-row.reset {
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: none;
-  }
-
-  .dataset-label {
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #363636;
-    min-width: 120px;
-    display: inline-block;
-    text-align: right;
-    padding-right: 0.75rem;
-  }
-
-  .bar-container {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-  }
-
-  .bar-wrapper {
-    position: relative;
-    height: 28px;
-    display: flex;
-    align-items: center;
-  }
-
-  .bar {
-    height: 22px;
-    border-radius: 4px;
-    position: relative;
-    transition: width 1.2s ease-out;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .bar.model1 {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  }
-
-  .bar.model2 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    margin-top: 0.2rem;
-  }
-
-  .bar-text-display {
-    color: #363636;
-    font-weight: 600;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.1s;
-    white-space: nowrap;
-  }
-
-  .bar-row.animated .bar-text-display {
-    opacity: 1;
-  }
-
-  .bars-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    flex: 1;
-    position: relative;
-  }
-
-  .x-axis-top {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1.5px solid #dbdbdb;
-  }
-
-  .x-axis-label-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    margin-left: 120px;
-    position: relative;
-  }
-
-  .x-axis-name {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #363636;
-    margin-bottom: 0.35rem;
-    text-align: center;
-  }
-
-  .x-axis-labels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    position: relative;
-  }
-
-  .x-axis-tick {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-  }
-
-  .x-axis-tick-mark {
-    width: 1px;
-    height: 6px;
-    background-color: #4a4a4a;
-    margin-bottom: 0.2rem;
-  }
-
-  .x-axis-tick-label {
-    font-size: 0.75rem;
-    color: #4a4a4a;
-    font-weight: 500;
-  }
-
-  @media screen and (max-width: 768px) {
-    .x-axis-label-container {
-      margin-left: 90px;
-    }
-
-    .x-axis-name {
-      font-size: 0.75rem;
-    }
-
-    .x-axis-tick-label {
-      font-size: 0.7rem;
-    }
-    
-    .dataset-label {
-      min-width: 90px;
-      font-size: 0.75rem;
-      padding-right: 0.5rem;
-    }
-
-    .bar {
-      height: 18px;
-    }
-
-    .bar-wrapper {
-      height: 24px;
-    }
-
-    .bar-text-display {
-      font-size: 0.7rem;
-      margin-left: 0.4rem;
-    }
-
-    .bar-row {
-      margin-bottom: 1rem;
-    }
-  }
-</style>
-
-<script>
-  let barChartData = [];
-  let hasAnimated = false;
-
-  // X-axis configuration - customize the axis label
-  const xAxisConfig = {
-    axisLabel: 'Average Response Latency (s)',  // Customize axis name/label here
-    numTicks: 6  // Number of tick marks to display
-  };
-
-  // Load bar chart data
-  fetch('barplot_data.json')
-    .then(response => response.json())
-    .then(data => {
-      barChartData = data;
-      createXAxis();
-      createBarChart();
-      setupScrollAnimation();
-    })
-    .catch(error => console.error('Error loading bar chart data:', error));
-
-  function createXAxis() {
-    const xAxisContainer = document.getElementById('xAxisTop');
-    if (!xAxisContainer || barChartData.length === 0) return;
-
-    // Find max value from data
-    const maxValue = Math.max(
-      ...barChartData.flatMap(d => [d.model1.value, d.model2.value])
-    );
-
-    // Calculate nice tick values
-    const niceMax = Math.ceil(maxValue / 10) * 10;
-    const interval = niceMax / (xAxisConfig.numTicks - 1);
-    
-    const tickValues = [];
-    for (let i = 0; i < xAxisConfig.numTicks; i++) {
-      tickValues.push(Math.round(i * interval));
-    }
-
-    const labelsHTML = tickValues.map(value => `
-      <div class="x-axis-tick">
-        <div class="x-axis-tick-mark"></div>
-        <div class="x-axis-tick-label">${value}</div>
-      </div>
-    `).join('');
-
-    xAxisContainer.innerHTML = `
-      <div class="x-axis-label-container">
-        <div class="x-axis-name">${xAxisConfig.axisLabel}</div>
-        <div class="x-axis-labels">
-          ${labelsHTML}
-        </div>
-      </div>
-    `;
-  }
-
-  function createBarChart() {
-    const container = document.getElementById('barChart');
-    if (!container || barChartData.length === 0) return;
-
-    // Update legend with model names from data
-    if (barChartData[0]) {
-      document.getElementById('legend-model1').textContent = barChartData[0].model1.name;
-      document.getElementById('legend-model2').textContent = barChartData[0].model2.name;
-    }
-
-    // Find max value for scaling
-    const maxValue = Math.max(
-      ...barChartData.flatMap(d => [d.model1.value, d.model2.value])
-    );
-
-    // Create bar rows
-    barChartData.forEach((item, index) => {
-      const row = document.createElement('div');
-      row.className = 'bar-row';
-      row.style.transitionDelay = `${index * 0.1}s`;
-
-      const model1Width = (item.model1.value / maxValue) * 100;
-      const model2Width = (item.model2.value / maxValue) * 100;
-
-      row.innerHTML = `
-        <div style="display: flex; align-items: center;">
-          <div class="dataset-label">${item.dataset}</div>
-          <div class="bar-container">
-            <div class="bars-group">
-              <div class="bar-wrapper">
-                <div class="bar model1" data-width="${model1Width}" style="width: 0%;"></div>
-                <div class="bar-text-display">${item.model1.text}</div>
-              </div>
-              <div class="bar-wrapper">
-                <div class="bar model2" data-width="${model2Width}" style="width: 0%;"></div>
-                <div class="bar-text-display">${item.model2.text}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      container.appendChild(row);
-    });
-  }
-
-  function setupScrollAnimation() {
-    const barChartSection = document.getElementById('barChartContainer');
-    if (!barChartSection) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !hasAnimated) {
-          animateBars();
-          hasAnimated = true;
-        }
-      });
-    }, {
-      threshold: 0.3
-    });
-
-    observer.observe(barChartSection);
-
-    // Replay animation on hover
-    barChartSection.addEventListener('mouseenter', () => {
-      resetAndAnimateBars();
-    });
-  }
-
-  function resetAndAnimateBars() {
-    const rows = document.querySelectorAll('.bar-row');
-    
-    // First reset all animations to initial state
-    rows.forEach(row => {
-      row.classList.remove('animated');
-      row.classList.add('reset');
-      const bars = row.querySelectorAll('.bar');
-      bars.forEach(bar => {
-        bar.classList.remove('animated');
-        bar.style.width = '0%';
-      });
-    });
-
-    // Force reflow to ensure reset is applied
-    void document.querySelector('.bar-row').offsetWidth;
-
-    // Remove reset class and restore transitions
-    setTimeout(() => {
-      rows.forEach(row => {
-        row.classList.remove('reset');
-      });
-      
-      // Then trigger animation after transitions are restored
-      setTimeout(() => {
-        animateBars();
-      }, 20);
-    }, 20);
-  }
-
-  function animateBars() {
-    const rows = document.querySelectorAll('.bar-row');
-    
-    rows.forEach((row, index) => {
-      setTimeout(() => {
-        row.classList.add('animated');
-        
-        // Animate bar widths
-        const bars = row.querySelectorAll('.bar');
-        bars.forEach(bar => {
-          const targetWidth = bar.getAttribute('data-width');
-          setTimeout(() => {
-            bar.style.width = targetWidth + '%';
-            bar.classList.add('animated');
-          }, 50);
-        });
-      }, index * 150);
-    });
-  }
-</script>
-
 <!-- Paper abstract -->
 <section class="section hero is-light" style="padding: 1rem 1.5rem; margin-top: 0px;">
   <div class="container is-max-desktop">
@@ -1240,14 +856,15 @@ function OptanonWrapper() {
       <div class="column">
         <h2 class="title is-3" style="margin-bottom: 0.75rem;">How do we leverage the "free GPU compute density" to achieve AR and diffusion synergy?</h2>
         <div class="content">
-          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Free Token Slots</h3></li>
+          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">The Secret Sauce: Free Token Slots</h3></li>
           <figure class="image">
             <img src="static/images/latency_scaling_32b.png" style="width: 40%; height: auto;" alt="Free Token Slots">
             <figcaption>Figure 1: Free Token Slots</figcaption>
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
+            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. 
+            Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
             </p>
           </div>
         </div>
@@ -1259,9 +876,24 @@ function OptanonWrapper() {
             <figcaption>Figure 2: Sequence-level Hybrid Attention Patterns</figcaption>
           </figure>
           <br>
-          <div class="content has-text-justified mt-4">
+          <div class="content has-text-justified">
             <p>
             We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. So the prefix tokens and those that are waiting to be verified are attended causally while the thinking diffusion tokens are attended in a bidirectional manner. 
+            </p>
+          </div>
+        </div>
+
+        <div class="content">
+          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Diffusion Self-Speculation with Autoregressive Verification</h3></li>
+          <figure class="image">
+            <img src="static/images/comparison.png" style="width: 50%; height: auto;" alt="Comparison of TiDAR with Related Works">
+            <figcaption>Figure 3: Comparing TiDAR with other frameworks.</figcaption>
+          </figure>
+          <div class="content has-text-justified mt-4">
+            <p>
+            With the help of the custom mask, we can verify the proposals from last step as well as pre-draft new proposals starting at every single prefix in a single forward. 
+            Plus, we guarantee one token per forward pass, similar to speculative decoding but with more added advantages. 
+            Given the right draft length, we can maximally leverage the free token slots and achieve the best of both worlds. See top demo for illustration.
             </p>
           </div>
         </div>
@@ -1271,7 +903,7 @@ function OptanonWrapper() {
           <figure class="image">
             <img src="static/images/benchmark_throughput_barplot_ncg.png" style="width: 60%; height: auto;" alt="Why is TiDAR special?">
             <figcaption>
-            Figure 3: TiDAR 8B decoding speed on SGLang using a single H100. 
+            Figure 4: TiDAR 8B decoding speed on SGLang using a single H100. 
             TiDAR achieves up to 5.8x higher decoding T/s than AR and 2.5x+ higher than EAGLE-v3.
           </figcaption>
           </figure>
@@ -1303,145 +935,56 @@ function OptanonWrapper() {
     <div class="columns is-centered has-text-centered">
       <div class="column">
         <h2 class="title is-3">Main Results</h2>
-        
-      </div>
-    </div>
-  </div>
-</section>
+        <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Quality-Efficiency Trade-offs</h3></li>
+        <div class="content has-text-justified mt-4">
+          <figure class="image">
+            <img src="static/images/efficiency-quality.png" alt="Quality-Efficiency Trade-offs" style="width: 80%; height: auto; object-fit: contain;">
+          </figure>
+          <p>
+          TiDAR achieves impressive speedup over traditional AR models, and stays impressively competitive to SOTA speculative decoding method, EAGLE-v3, giving a wall-clock token per second throughput boost from 4.71x to 5.91x with PyTorch + Flex Attention implementation. 
+          </p>
+        </div>
 
-<section class="section">
-  <div class="container is-fullwidth">
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <h2 class="title is-3">Ablation Studies</h2>
-        
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-wider">
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <h2 class="title is-3">State of the Art Accuracy/Response Length Trade-offs</h2>
-        <div class="content">
-          <div class="columns is-centered">
-            <div class="column is-12">
-              <figure class="image" style="margin-top: 24px;">
-                <div class="columns is-centered">
-                  <!-- <div style="display: flex; justify-content: center; width: 100%;"> -->
-                    <figure style="
-                    position: relative;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 140%;
-                    margin-top: 0;
-                    margin-bottom: 1em;
-                    text-align: center;
-                  ">
-                    <div style="display: inline-block; width: 100%; text-align: center;">
-                      <img src="static/images/table.png" alt="Data Mixture Comparison" style="
-                        width: 100%; height: auto; object-fit: contain;
-                        border: 1px solid #eaeaea; border-radius: 8px;
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-                        background-color: white; padding: 15px;
-                      ">
-                      <figcaption style="
-                        display: block;
-                        width: 100%;
-                        margin-top: 12px;
-                        text-align: center;
-                        font-size: 0.95rem;
-                      ">
-                        Table 1: Comparison of DLER models and baseline models in terms of Pass@1 accuracy and corresponding
-                        average output length (tokens) across benchmarks.
-                      </figcaption>
-                    </div>
-                  </figure>
-                  <!-- </div> -->
-
-                </div>
+        <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Likelihood & Generative Performance</h3></li>
+        <div class="content has-text-justified mt-4">
+          <br>
+          <div class="columns is-vcentered is-variable is-1">
+            <div class="column is-half">
+              <figure class="image" style="margin: 0;">
+                <img src="static/images/generative.png" alt="Generative" style="width: 100%; height: auto; object-fit: contain;">
+              </figure>
+            </div>
+            <div class="column is-half">
+              <figure class="image" style="margin: 0;">
+                <img src="static/images/likelihood.png" alt="Likelihood" style="width: 100%; height: auto; object-fit: contain;">
               </figure>
             </div>
           </div>
+          <p>
+          We compare TiDAR with AR models (Llama, SmolLM, Qwen) and diffusion models (Dream, Llada, Block Diffusion) on downstream tasks.
+          With only continual pretraining, not only is TiDAR outperforming diffusion models (with the best quality at 1T/NFE) but also matches or significantly close the gap to AR models. 
+          </p>
         </div>
-        <div class="content has-text-justified mt-4">
-            <p>
-                <!-- Based on the insights obtained from our explorations, we apply CLIMB to two existing datasets: Nemotron-CC and smollm-corpus, with the goal of constructing a powerful new pre-training dataset. 
-                Specifically, we first combine Nemotron-CC and smollm-corpus, and then employ our proposed CLIMB-clustering method to semantically reorganize and filter this combined dataset into 20 distinct clusters, leading to a 1.2-trillion-token high-quality corpus, named <span style="color:#e15043; font-weight:500;">ClimbLab</span>. 
-                Subsequently, we utilize CLIMB-search to identify an optimal data mixture from these clusters.
-                Using this optimal mixture, we further extract a 400-billion-token high-quality dataset named <span style="color: #8046a1; font-weight:500;">ClimbMix</span>.
-                We publicly release these two datasets: the filtered 1.2-trillion-token dataset organized into 20 semantic clusters as a research playground for further data-mixture studies, and the optimized 400-billion-token ClimbMix dataset for efficient pre-training. -->
-            </p>
-            <p>
-                <!-- We train a 1B model from scratch with ClimbMix and evaluate its performance relative to models pretrained on other datasets under the same token budget. 
-                The results in Figure 3 indicate that models trained on ClimbMix significantly outperform those trained on existing datasets.  -->
-            </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="container is-wider">
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <h2 class="title is-3">Different Length Penalties No Longer Push the Accuracy–Efficiency Frontier</h2>
-
-        <div class="content has-text-justified mt-4">
-            <p>
-              We show that with DLER, the effect of adopting different
-              length-penalty rewards fundamentally changes. Specifically, the accuracy–length relationship is no longer
-              altered in a way that yields strictly shorter responses with higher accuracy; instead, a trade-off always exists.
-            </p>
+        <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Ablation Studies</h3></li>
+        <div class="content has-text-justified">
+          In our paper, we also conducted detailed ablation studies to justify our design choices: 
+          <ul>
+            <li>
+            Pareto Frontier under the same training recipe. 
+            </li>
+            <li>
+            Comparing TiDAR's parallel decoding with other popular diffusion denoising strategies (such as threshold-based and left-to-right). 
+            </li>
+            <li>
+            TiDAR gives the flexibility to verify with AR and diffusion predictions, we showcase their effects on downstream performance. 
+            </li>
+            <li>
+            One of the critical advantages of TiDAR is that we use one-step diffusion for efficient drafting. 
+            To further boost its performance, we apply a full masking strategy to bridge train-test consistency and improve loss signal density. 
+            </li>
+          </ul>
         </div>
-        <figure style="position: relative; left: 50%; transform: translateX(-50%); width: 100%; text-align:center; margin: 0;">
-          <div style="
-            display: flex;
-            justify-content: center;
-            align-items: stretch;          /* make both columns equal height */
-            gap: 24px;
-            flex-wrap: nowrap;             /* keep them on one line */
-            box-sizing: border-box;
-          ">
-            <!-- Subfigure A -->
-            <figure style="
-              margin: 0;                   /* remove default figure margins */
-              text-align: center;
-              flex: 0 0 calc(50% - 12px);  /* 50% minus half the gap */
-              max-width: calc(50% - 12px);
-              display: flex;               /* stack image and caption */
-              flex-direction: column;
-            ">
-              <img src="static/images/diff_length.png" alt="MATH"
-                   style="width: 100%; height: auto; display: block; object-fit: contain;">
-              <figcaption style="margin-top: 6px;">(a) MATH</figcaption>
-            </figure>
-        
-            <!-- Subfigure B -->
-            <figure style="
-              margin: 0;
-              text-align: center;
-              flex: 0 0 calc(50% - 12px);
-              max-width: calc(50% - 12px);
-              display: flex;
-              flex-direction: column;
-            ">
-              <img src="static/images/diff_length_aime.png" alt="AIME-24"
-                   style="width: 100%; height: auto; display: block; object-fit: contain;">
-              <figcaption style="margin-top: 6px;">(b) AIME-24</figcaption>
-            </figure>
-          </div>
-        
-          <figcaption style="text-align: center; margin-top: 10px;">
-            Figure 5: Accuracy and average response length of DeepSeek-R1-7B trained using DLER with different length
-            penalties on MATH and AIME-24. DLER establishes a new accuracy–length efficiency frontier,
-            with varying length penalties moving performance along the frontier rather than beyond it.
-          </figcaption>
-        </figure>
       </div>
     </div>
   </div>
