@@ -361,6 +361,24 @@ function OptanonWrapper() {
   </div>
 </section>
 
+<!-- Generation Demo -->
+
+<!-- Embedded Slides Demo -->
+<section class="section" style="padding: 2rem 1.5rem;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column has-text-centered">
+        <h2 class="title is-4 has-text-centered has-text-black" style="margin-bottom: 1.5rem;">
+          Parallel Diffusion Drafting and Autoregressive Sampling
+        </h2>
+        <div class="box" style="padding: 0; overflow: hidden;">
+          <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vT9hl7HagoUsa0pHyEKjBluZ3BSdfRKejs-7g8xmks7IV2M8MYUzMpHAOcowNvVRvMdGm7zshxz9__6/pubembed?start=true&loop=true&delayms=1000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="max-width: 100%; width: 100%; height: 569px;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- Interactive Streaming Demo Section -->
 <section class="section" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);">
@@ -1195,18 +1213,20 @@ function OptanonWrapper() {
         <div class="content has-text-justified">
           <ul>
             <li>
-              This project, <strong>Doing Length pEnalty Right (DLER)</strong>, cuts Chain-of-Thought (CoT) length by ~70% through RL fine-tuning on DeepSeek-R1 and Llama-Nemotron models without loss of accuracy – delivering more intelligence per token.
+            Diffusion language models hold the promise of fast parallel generation, while autoregressive (AR) models typically excel in quality due to their causal structure aligning naturally with language modeling. This raises a fundamental question: can we achieve a synergy with high throughput, higher GPU utilization, and AR level quality? Existing methods fail to effectively balance these two aspects, either prioritizing AR using a weaker model for sequential drafting (speculative decoding), leading to lower drafting efficiency, or using some form of left-to-right (AR-like) decoding logic for diffusion, which still suffers from quality degradation and forfeits its potential parallelizability.
             </li>
             <li>
-              We find that it is not the sophisticated design of the length penalty that determines performance, but rather the choice of RL optimization algorithm. Even the simplest length truncation can achieve state-of-the-art accuracy-to-token efficiency when combined with our DLER recipe
+            We introduce <strong>TiDAR, a sequence-level hybrid architecture that drafts tokens (Thinking) in Diffusion and samples final outputs (Talking) AutoRegressively - all within a single forward pass using specially designed structured attention masks</strong>. This design exploits the free GPU compute density, achieving a strong balance between drafting and verification capacity. Moreover, TiDAR is designed to be serving-friendly (low overhead) as a standalone model.
+            </li>
+            <li>
+            We extensively evaluate TiDAR against AR models, speculative decoding, and diffusion variants across generative and likelihood tasks at 1.5B and 8B scales. <strong>Thanks to the parallel drafting and sampling as well as exact KV cache support, TiDAR outperforms speculative decoding in measured throughput and surpasses diffusion models like Dream and Llada in both efficiency and quality. Most notably, TiDAR is the first architecture to close the quality gap with AR models while delivering 4.71x to 5.91x more tokens per second<\strong>.
             </li>
           </ul>
-        </div>
+        <!-- </div>
           <figure class="image">
             <img src="static/images/teaser.png" alt="CLIMB Data Filtering Architecture">
             <figcaption>Figure 1: DLER substantially shortens the Chain-of-Thought (CoT) length in reasoning models trained with SFT, RL, or a combination of both methods.</figcaption>
           </figure>
-          <!-- add some space here -->
           <br>
           <figure style="position: relative; left: 50%; transform: translateX(-50%); width: 120%; text-align:center;">
             <div style="
@@ -1225,12 +1245,12 @@ function OptanonWrapper() {
                 <img src="static/images/latency_7b_1.png" alt="RL-trained model" style="width: 100%; height: auto; object-fit: contain;">
                 <figcaption style="margin-top: 6px;">(b)</figcaption>
               </figure>
-            </div>
+          </div> -->
           
-            <figcaption style="text-align: center; margin-top: 10px;">
-              Figure 2: (a) DLER achieves state-of-the-art accuracy/length trade-offs, shortening CoT by up to 70% without losing accuracy. (b) On AIME-24, DLER-R1 models enable better test-time scaling.
+          <!-- <figcaption style="text-align: center; margin-top: 10px;">
+            Figure 2: (a) DLER achieves state-of-the-art accuracy/length trade-offs, shortening CoT by up to 70% without losing accuracy. (b) On AIME-24, DLER-R1 models enable better test-time scaling.
             </figcaption>
-          </figure>
+          </figure> -->
       </div>
     </div>
   </div>
