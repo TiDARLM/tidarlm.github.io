@@ -369,10 +369,13 @@ function OptanonWrapper() {
     <div class="columns is-centered">
       <div class="column has-text-centered">
         <h2 class="title is-4 has-text-centered has-text-black" style="margin-bottom: 1.5rem;">
-          Parallel Diffusion Drafting and Autoregressive Sampling
+          TiDAR's Parallel Diffusion Drafting and Autoregressive Sampling
         </h2>
         <div class="box" style="padding: 0; overflow: hidden;">
           <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vT9hl7HagoUsa0pHyEKjBluZ3BSdfRKejs-7g8xmks7IV2M8MYUzMpHAOcowNvVRvMdGm7zshxz9__6/pubembed?start=true&loop=true&delayms=1000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="max-width: 100%; width: 100%; height: 569px;"></iframe>
+        </div>
+        <div class="content has-text-centered">
+          (We illustrate with draft length = 3 but TiDAR 1.5B and 8B use draft length = 16 in practice.)
         </div>
       </div>
     </div>
@@ -1244,7 +1247,7 @@ function OptanonWrapper() {
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            The power of modern GPUs lies in a balanced utilization of compute density of memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
+            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
             </p>
           </div>
         </div>
@@ -1256,14 +1259,21 @@ function OptanonWrapper() {
             <figcaption>Figure 2: Sequence-level Hybrid Attention Patterns</figcaption>
           </figure>
           <br>
-          We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. So the prefix tokens and those that are waiting to be verified are attended causally while the thinking diffusion tokens are attended in a bidirectional manner. 
+          <div class="content has-text-justified mt-4">
+            <p>
+            We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. So the prefix tokens and those that are waiting to be verified are attended causally while the thinking diffusion tokens are attended in a bidirectional manner. 
+            </p>
+          </div>
         </div>
 
         <div class="content">
           <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Why is TiDAR special?</h3></li>
           <figure class="image">
             <img src="static/images/benchmark_throughput_barplot_ncg.png" style="width: 60%; height: auto;" alt="Why is TiDAR special?">
-            <figcaption>Figure 3: TiDAR decoding speed on SGLang</figcaption>
+            <figcaption>
+            Figure 3: TiDAR 8B decoding speed on SGLang using a single H100. 
+            TiDAR achieves up to 5.8x higher decoding T/s than AR and 2.5x+ higher than EAGLE-v3.
+          </figcaption>
           </figure>
           <div class="content has-text-justified">
             <ul>
@@ -1293,6 +1303,17 @@ function OptanonWrapper() {
     <div class="columns is-centered has-text-centered">
       <div class="column">
         <h2 class="title is-3">Main Results</h2>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-fullwidth">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Ablation Studies</h2>
         
       </div>
     </div>
