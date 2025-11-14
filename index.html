@@ -1222,35 +1222,7 @@ function OptanonWrapper() {
             We extensively evaluate TiDAR against AR models, speculative decoding, and diffusion variants across generative and likelihood tasks at 1.5B and 8B scales. <strong>Thanks to the parallel drafting and sampling as well as exact KV cache support, TiDAR outperforms speculative decoding in measured throughput and surpasses diffusion models like Dream and Llada in both efficiency and quality. Most notably, TiDAR is the first architecture to close the quality gap with AR models while delivering 4.71x to 5.91x more tokens per second<\strong>.
             </li>
           </ul>
-        <!-- </div>
-          <figure class="image">
-            <img src="static/images/teaser.png" alt="CLIMB Data Filtering Architecture">
-            <figcaption>Figure 1: DLER substantially shortens the Chain-of-Thought (CoT) length in reasoning models trained with SFT, RL, or a combination of both methods.</figcaption>
-          </figure>
-          <br>
-          <figure style="position: relative; left: 50%; transform: translateX(-50%); width: 120%; text-align:center;">
-            <div style="
-              display: flex;
-              justify-content: center;
-              align-items: flex-start;
-              gap: 24px;
-              flex-wrap: wrap;
-            ">
-              <figure style="text-align: center; flex: 1 1 48%; max-width: 48%;">
-                <img src="static/images/plot_TRI_7B.png" alt="SFT-trained model" style="width: 100%; height: auto; object-fit: contain;">
-                <figcaption style="margin-top: 6px;">(a)</figcaption>
-              </figure>
-          
-              <figure style="text-align: center; flex: 1 1 48%; max-width: 48%;">
-                <img src="static/images/latency_7b_1.png" alt="RL-trained model" style="width: 100%; height: auto; object-fit: contain;">
-                <figcaption style="margin-top: 6px;">(b)</figcaption>
-              </figure>
-          </div> -->
-          
-          <!-- <figcaption style="text-align: center; margin-top: 10px;">
-            Figure 2: (a) DLER achieves state-of-the-art accuracy/length trade-offs, shortening CoT by up to 70% without losing accuracy. (b) On AIME-24, DLER-R1 models enable better test-time scaling.
-            </figcaption>
-          </figure> -->
+        </div>
       </div>
     </div>
   </div>
@@ -1263,76 +1235,69 @@ function OptanonWrapper() {
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column">
-        <h2 class="title is-3" style="margin-bottom: 0.75rem;">What goes wrong when applying a length penalty? Re-examining the Simplest Length Penalty - Truncation</h2>
+        <h2 class="title is-3" style="margin-bottom: 0.75rem;">How do we leverage the "free GPU compute density" to achieve AR and diffusion synergy?</h2>
         <div class="content">
-          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Stricter Length Penalty Leads to Higher Reward Variance</h3></li>
-          <div class="content has-text-justified mt-4">
-            <p>
-              More aggressive truncation introduces greater training instability by increasing group-wise advantage variance, which in turn leads to more biased advantage estimates, thus we propose to swap out the group-wise normalization with batch-wise normalization to mitigate this issue.
-            </p>
-          </div>
-          <!-- <figure class="image">
-            <img src="static/images/plot_grpo_reinforce_horizontal.png" alt="CLIMB Data Filtering Architecture">
-            <figcaption>Figure 1: Accuracy and average response length of DeepSeek-R1-7B on the AIME-24 test set, evaluated every
-              10 training steps across two RL training runs: group-wise reward normalization (GRPO) and batch-wise
-              normalization. GRPO shows declining accuracy while batch-wise reward normalization remains stable despite
-              reduced token counts.</figcaption>
-          </figure> -->
-        </div>
-        <div class="content">
-          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Entropy Collapse Limits Exploration of Reasoning Paths</h3></li>
-          <div class="content has-text-justified mt-4">
-            <p>
-              Clipping the updates of low-probability, high-entropy tokens—essential for exploring diverse reasoning paths—can cause an entropy collapse that limits exploration. Increasing the clipping threshold preserves these tokens during gradient updates, thereby alleviating entropy collapse.
-            </p>
-          </div>
+          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Free Token Slots</h3></li>
           <figure class="image">
-            <img src="static/images/entropy.png" alt="CLIMB Data Filtering Architecture">
-            <figcaption>Figure 3: Left: Word clouds of the most frequent tokens clipped by the high-threshold before applying higher clipping threshold,showing that many are transitional words important for reasoning, and clipping them limits exploration during RL training. (Right) Average probability and entropy of tokens not clipped, clipped by the higher threshold, and clipped by the lower threshold during RL training. Clipped tokens have much lower probabilities than unclipped ones, and those clipped by the higher threshold consistently show higher entropy, supporting that these are often high-entropy transitional tokens triggering reasoning steps.</figcaption>
+            <img src="static/images/latency_scaling_32b.png" style="width: 40%; height: auto;" alt="Free Token Slots">
+            <figcaption>Figure 1: Free Token Slots</figcaption>
           </figure>
-        </div>
-        <div class="content">
-          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Length Penalty Over-sparsify Training Signal</h3></li>
           <div class="content has-text-justified mt-4">
             <p>
-              Applying length penalty makes early training too difficult and later stages dominated by easy samples. We adopt Dynamic Sampling, which filters out overly easy/hard prompts and extreme response lengths, yielding balanced training signals and better length control.
+            The power of modern GPUs lies in a balanced utilization of compute density of memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
             </p>
           </div>
+        </div>
+
+        <div class="content">
+          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Sequence-level Hybrid Attention</h3></li>
           <figure class="image">
-            <img src="static/images/ds_filter_combined.png" alt="CLIMB Data Filtering Architecture">
-            <figcaption>Figure 4: Left: Ratio of training prompts with all 16 rollouts receiving zero reward, including those caused by exceeding the truncation length. Around half of the prompts fall into this category early in training, weakening the signal and biasing the model toward easier prompts that model already know how to solve within the target length. Right: Ratio of training prompts with all 16 rollouts receiving reward score of one steadily increases, while average response length declines and remains markedly shorter than that for prompts whose rollouts all receive a reward of zero.</figcaption>
+            <img src="static/images/mask.png" style="width: 80%; height: auto;" alt="Sequence-level Hybrid Attention">
+            <figcaption>Figure 2: Sequence-level Hybrid Attention Patterns</figcaption>
           </figure>
+          <br>
+          We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. So the prefix tokens and those that are waiting to be verified are attended causally while the thinking diffusion tokens are attended in a bidirectional manner. 
+        </div>
+
+        <div class="content">
+          <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Why is TiDAR special?</h3></li>
+          <figure class="image">
+            <img src="static/images/benchmark_throughput_barplot_ncg.png" style="width: 60%; height: auto;" alt="Why is TiDAR special?">
+            <figcaption>Figure 3: TiDAR decoding speed on SGLang</figcaption>
+          </figure>
+          <div class="content has-text-justified">
+            <ul>
+              <li>
+              TiDAR achieves SOTA inference latency under small batch sizes (better than speculative decoding such as EAGLE-v3). 
+              </li>
+              <li>
+              TiDAR outperforms the quality-efficiency trade-offs than open source DLLMs such as Dream and Llada.
+              </li>
+              <li>
+              TiDAR is a standalone model that is easy to train and deploy with minimal hyperparameters to tune and low serving overhead.
+              </li>
+              <li>
+              TiDAR has extremely rich training signals, even better than AR models, thanks to its dual objective. 
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-
 
 
 <section class="section">
   <div class="container is-fullwidth">
     <div class="columns is-centered has-text-centered">
       <div class="column">
-        <h2 class="title is-2">Combining All Ingredients: Do Length pEnalty Right (DLER)</h2>
-
-        <div class="content has-text-justified mt-4">
-            <p style="color: forestgreen;">
-              We unify batch-wise reward normalization, a higher policy update clipping
-              threshold, dynamic sampling to remove instances lacking balanced training signals, and a simple length
-              truncation penalty into a comprehensive training recipe, which we term DLER (Doing Length pEnalty
-              Right).
-            </p>
-        </div>
-        <h5 class="title is-5">Training Code will be released soon!</h5>
-
+        <h2 class="title is-3">Main Results</h2>
+        
       </div>
     </div>
   </div>
 </section>
-
-
 
 
 <section class="section">
@@ -1460,57 +1425,6 @@ function OptanonWrapper() {
     </div>
   </div>
 </section>
-
-<!-- <section class="section">
-  <div class="container is-wider">
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <h2 class="title is-3">Overcoming Quality Limitations of Publicly Available Training Data</h2>
-        <div class="content">
-          <div class="columns is-centered">
-            <div class="column is-12">
-              <figure class="image" style="margin-top: 24px;">
-                <div class="columns is-centered">
-                    <div class="column is-7">
-                        <figure class="image" style="margin-top: 0px;">
-                          <img src="static/images/final_data_comparison.png" alt="Data Mixture Comparison" class="large-diagram" 
-                            style="max-height: 480px; width: 100%; object-fit: contain; 
-                            border: 1px solid #eaeaea; border-radius: 8px; 
-                            box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
-                            background-color: white; padding: 15px;">
-                          <figcaption style="text-align: left; margin-top: 15px; font-size: 0.95rem;">
-                            Figure 3: Training a 1B model from scratch on ClimbMix shows better scaling effects than training on other datasets.
-                          </figcaption>
-                        </figure>
-                      </div>
-
-                </div>
-              </figure>
-            </div>
-          </div>
-        </div>
-        <div class="content has-text-justified mt-4">
-            <p>
-                Based on the insights obtained from our explorations, we apply CLIMB to two existing datasets: Nemotron-CC and smollm-corpus, with the goal of constructing a powerful new pre-training dataset. 
-                Specifically, we first combine Nemotron-CC and smollm-corpus, and then employ our proposed CLIMB-clustering method to semantically reorganize and filter this combined dataset into 20 distinct clusters, leading to a 1.2-trillion-token high-quality corpus, named <span style="color:#e15043; font-weight:500;">ClimbLab</span>. 
-                Subsequently, we utilize CLIMB-search to identify an optimal data mixture from these clusters.
-                Using this optimal mixture, we further extract a 400-billion-token high-quality dataset named <span style="color: #8046a1; font-weight:500;">ClimbMix</span>.
-                We publicly release these two datasets: the filtered 1.2-trillion-token dataset organized into 20 semantic clusters as a research playground for further data-mixture studies, and the optimized 400-billion-token ClimbMix dataset for efficient pre-training.
-            </p>
-            <p>
-                We train a 1B model from scratch with ClimbMix and evaluate its performance relative to models pretrained on other datasets under the same token budget. 
-                The results in Figure 3 indicate that models trained on ClimbMix significantly outperform those trained on existing datasets. 
-            </p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section> -->
-
-<!-- Cluster Table Section -->
-
-<!-- End Cluster Table Section -->
 
 
 <!--BibTex citation -->
