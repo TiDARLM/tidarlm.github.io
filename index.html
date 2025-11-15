@@ -867,7 +867,8 @@ function OptanonWrapper() {
           <div class="content has-text-justified mt-4">
             <p>
             The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density by weights reusing but this requires loading more KV cache for each sample and more aggressive model splitting. 
-            For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. 
+            <!-- For situations where we care more about per-request latency, w -->
+            We can actually pass in more tokens to the forward with similar latency. Under the context of TiDAR, we pass several mask tokens to perform diffusion drafting and several pre-drafted tokens to perform autoregressive sampling.  
             <!-- Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals.  -->
             These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
             </p>
