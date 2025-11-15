@@ -7,7 +7,7 @@
   <meta name="description" content="TiDAR: Think in Diffusion, Talk in Autoregression">
   <meta property="og:title" content="TiDAR: Think in Diffusion, Talk in Autoregression"/>
   <meta property="og:description" content="TiDAR: Think in Diffusion, Talk in Autoregression"/>
-  <meta property="og:url" content="https://research.nvidia.com/labs/lpr/dler_rl/"/>
+  <!-- <meta property="og:url" content="https://research.nvidia.com/labs/lpr/dler_rl/"/> -->
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
   <meta property="og:image" content="static/image/your_banner_image.png" />
   <meta property="og:image:width" content="1200"/>
@@ -72,15 +72,15 @@
   <script src="static/js/index.js"></script>
   <script src="document_samples.js"></script>
 <!-- OneTrust Cookies Consent Notice start for nvidia.com -->
-<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5" ></script>
+<!-- <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="3e2b62ff-7ae7-4ac5-87c8-d5949ecafff5" ></script>
 <script type="text/javascript">
 function OptanonWrapper() {       
         var event = new Event('bannerLoaded');
         window.dispatchEvent(event);
     }
-</script>
+</script> -->
 <!-- OneTrust Cookies Consent Notice end for nvidia.com -->
-<script type="text/javascript" src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script>
+<!-- <script type="text/javascript" src="https://images.nvidia.com/aem-dam/Solutions/ot-js/ot-custom.js"></script> -->
 
 <style>
   .policy-links {
@@ -258,7 +258,7 @@ function OptanonWrapper() {
             <div class="is-size-5 publication-authors" style="margin-bottom: 0.5rem;">
               <!-- Paper authors -->
                 <span class="author-block">
-                  <a href="https://jingyu6.github.io/" target="_blank">Jingyu Liu<sup>*,1</sup></a>,</span>
+                  <a href="https://jingyu6.github.io/" target="_blank">Jingyu Liu<sup>1*</sup></a>,</span>
                 <span class="author-block">
                   <a href="https://simonxin.com/" target="_blank">Xin Dong<sup>*</sup></a>,</span>
                 <span class="author-block">
@@ -278,6 +278,8 @@ function OptanonWrapper() {
                 </div>
 
                 <div class="is-size-5 publication-authors" style="margin-bottom: 0.5rem;">
+                  <span class="eql-cntrb"><small><sup>*</sup> Equal Contribution, XD as the Project Lead</small></span><br>
+                  <span class="eql-cntrb"><small><br></small></span>
                   <span class="author-block">
                     <img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" style="width: 2em; height: 2em; vertical-align: middle; margin-right: 0.3em;">
                     NVIDIA
@@ -369,14 +371,14 @@ function OptanonWrapper() {
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column has-text-centered">
-        <h2 class="title is-4 has-text-centered has-text-black" style="margin-bottom: 1.5rem;">
+        <!-- <h2 class="title is-4 has-text-centered has-text-black" style="margin-bottom: 1.5rem;">
           TiDAR's Parallel Diffusion Drafting and Autoregressive Sampling
-        </h2>
+        </h2> -->
         <div class="box" style="padding: 0; overflow: hidden;">
           <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vT9hl7HagoUsa0pHyEKjBluZ3BSdfRKejs-7g8xmks7IV2M8MYUzMpHAOcowNvVRvMdGm7zshxz9__6/pubembed?start=true&loop=true&delayms=1000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="max-width: 100%; width: 100%; height: 569px;"></iframe>
         </div>
         <div class="content has-text-centered">
-          (We illustrate with draft length = 3 but TiDAR 1.5B and 8B use draft length = 16 in practice.)
+          (We illustrate with draft length = 3 and TiDAR 1.5B and 8B use draft length = 16 in practice.)
         </div>
       </div>
     </div>
@@ -832,13 +834,14 @@ function OptanonWrapper() {
         <div class="content has-text-justified">
           <ul>
             <li>
-            Diffusion language models hold the promise of fast parallel generation, while autoregressive (AR) models typically excel in quality due to their causal structure aligning naturally with language modeling. This raises a fundamental question: can we achieve a synergy with high throughput, higher GPU utilization, and AR level quality? Existing methods fail to effectively balance these two aspects, either prioritizing AR using a weaker model for sequential drafting (speculative decoding), leading to lower drafting efficiency, or using some form of left-to-right (AR-like) decoding logic for diffusion, which still suffers from quality degradation and forfeits its potential parallelizability.
+            Diffusion language models hold the promise of fast parallel generation, while autoregressive (AR) models typically excel in quality. But why choose? 
+            TiDAR allows you have the best of both worlds in one model with zero overhead by leveraging the unused compute to memory density on GPUs.
             </li>
             <li>
-            We introduce <strong>TiDAR, a sequence-level hybrid architecture that drafts tokens (Thinking) in Diffusion and samples final outputs (Talking) AutoRegressively - all within a single forward pass using specially designed structured attention masks</strong>. This design exploits the free GPU compute density, achieving a strong balance between drafting and verification capacity. Moreover, TiDAR is designed to be serving-friendly (low overhead) as a standalone model.
+            We introduce <strong>TiDAR, a sequence-level hybrid architecture that drafts tokens (Thinking) in Diffusion and samples final outputs (Talking) in AutoRegression - all within a single forward pass using a structured attention mask.</strong>
             </li>
             <li>
-            We extensively evaluate TiDAR against AR models, speculative decoding, and diffusion variants across generative and likelihood tasks at 1.5B and 8B scales. <strong>Thanks to the parallel drafting and sampling as well as exact KV cache support, TiDAR outperforms speculative decoding in measured throughput and surpasses diffusion models like Dream and Llada in both efficiency and quality. Most notably, TiDAR is the first architecture to close the quality gap with AR models while delivering 4.71x to 5.91x more tokens per second<\strong>.
+            We extensively evaluate TiDAR against AR models, speculative decoding, and diffusion variants across generative and likelihood tasks at 1.5B and 8B scales. Thanks to the parallel drafting and sampling as well as exact KV cache support, TiDAR outperforms speculative decoding in measured throughput and surpasses diffusion models like Dream and Llada in both efficiency and quality. Most notably, TiDAR is the first architecture to close the quality gap with AR models while delivering 4.71x to 5.91x more tokens per second.
             </li>
           </ul>
         </div>
@@ -854,7 +857,7 @@ function OptanonWrapper() {
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column">
-        <h2 class="title is-3" style="margin-bottom: 0.75rem;">How do we leverage the "free GPU compute density" to achieve AR and diffusion synergy?</h2>
+        <!-- <h2 class="title is-3" style="margin-bottom: 0.75rem;">Leverage the "free GPU compute" to achieve AR and diffusion synergy</h2> -->
         <div class="content">
           <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">The Secret Sauce: Free Token Slots</h3></li>
           <figure class="image">
@@ -863,8 +866,10 @@ function OptanonWrapper() {
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density but this requires loading more KV cache for each sample, leading to effective higher memory IO overhead. For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. 
-            Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals. These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
+            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density by weights reusing but this requires loading more KV cache for each sample and more aggressive model splitting. 
+            For situations where we care more about per-request latency, we can actually pass in more tokens to the forward with similar results. 
+            <!-- Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals.  -->
+            These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
             </p>
           </div>
         </div>
