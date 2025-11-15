@@ -180,8 +180,8 @@ benchmark/llava_bench/mme_pack
 tmp*.txt
 
 # Plots
-*.png
-*.pdf
+# *.png
+# *.pdf
 
 # personnal
 work_dirs/
