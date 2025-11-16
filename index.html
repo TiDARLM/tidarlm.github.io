@@ -884,7 +884,7 @@ function OptanonWrapper() {
           <br>
           <div class="content has-text-justified">
             <p>
-            We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. So the prefix tokens and those that are waiting to be verified are attended causally while the thinking diffusion tokens are attended in a bidirectional manner. 
+            We conduct parallel diffusion drafting and autoregressive sampling in a single forward pass with a structured attention mask. In TiDAR, the prefix tokens and tokens from the last step that are waiting to be verified are attended causally, while the draft tokens are attended in a bidirectional manner. 
             </p>
           </div>
         </div>
@@ -897,9 +897,9 @@ function OptanonWrapper() {
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            With the help of the custom mask, we can verify the proposals from last step as well as pre-draft new proposals starting at every single prefix in a single forward. 
-            Plus, we guarantee one token per forward pass, similar to speculative decoding but with more added advantages. 
-            Given the right draft length, we can maximally leverage the free token slots and achieve the best of both worlds. See top demo for illustration.
+            With the help of the customized structured mask, we can verify the proposals from last step as well as pre-draft new proposals starting at every single prefix in a single forward. Similar to speculative decoding, we can guarantee at least one token can be accepted in each forward pass but TiDAR can accept much more tokens due to its superior drafting ability. 
+            <!-- Plus, we guarantee one token per forward pass, similar to speculative decoding but with more added advantages.  -->
+            Given the right draft length, we can maximally leverage the free token slots and achieve great decoding speedup. 
             </p>
           </div>
         </div>
@@ -907,7 +907,7 @@ function OptanonWrapper() {
         <div class="content">
           <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Why is TiDAR special?</h3></li>
           <figure class="image">
-            <img src="static/images/benchmark_throughput_barplot_ncg.png" style="width: 60%; height: auto;" alt="Why is TiDAR special?">
+            <img src="static/images/benchmark_throughput_barplot_ncg.png" style="width: 90%; height: auto;" alt="Why is TiDAR special?">
             <figcaption>
             Figure 4: TiDAR 8B decoding speed on SGLang using a single H100. 
             TiDAR achieves up to 5.8x higher decoding T/s than AR and 2.5x+ higher than EAGLE-v3.
