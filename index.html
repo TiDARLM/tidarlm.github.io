@@ -916,16 +916,16 @@ function OptanonWrapper() {
           <div class="content has-text-justified">
             <ul>
               <li>
-              TiDAR achieves SOTA inference latency under small batch sizes (better than speculative decoding such as EAGLE-v3). 
+              TiDAR achieves the best inference latency under small batch sizes (better than SOTA speculative decoding such as EAGLE-v3). 
               </li>
               <li>
-              TiDAR outperforms the quality-efficiency trade-offs than open source DLLMs such as Dream and Llada.
+              TiDAR significantly outperforms the quality-efficiency trade-offs than open-source DLMs such as Dream and Llada.
               </li>
               <li>
               TiDAR is a standalone model that is easy to train and deploy with minimal hyperparameters to tune and low serving overhead.
               </li>
               <li>
-              TiDAR has extremely rich training signals, even better than AR models, thanks to its dual objective. 
+              Training TiDAR is straightforward and data-efficient, with the dual objective of diffusion (Mask Token Prediction) and autoregression (Next Token Prediction), resulting in richer training signals than both traditional AR and Diffusion models.
               </li>
             </ul>
           </div>
@@ -974,7 +974,7 @@ function OptanonWrapper() {
 
         <h3 class="title is-4" style="margin-bottom: 0.75rem; color:forestgreen;">Ablation Studies</h3></li>
         <div class="content has-text-justified">
-          In our paper, we also conducted detailed ablation studies to justify our design choices: 
+          In our paper, we also conducted detailed ablation studies to better understand the design choices: 
           <ul>
             <li>
             Pareto Frontier under the same training recipe. 
@@ -983,11 +983,11 @@ function OptanonWrapper() {
             Comparing TiDAR's parallel decoding with other popular diffusion denoising strategies (such as threshold-based and left-to-right). 
             </li>
             <li>
-            TiDAR gives the flexibility to verify with AR and diffusion predictions, we showcase their effects on downstream performance. 
+            TiDAR gives the flexibility to verify with either AR or diffusion predictions, we showcase their effects on downstream performance. 
             </li>
             <li>
             One of the critical advantages of TiDAR is that we use one-step diffusion for efficient drafting. 
-            To further boost its performance, we apply a full masking strategy to bridge train-test consistency and improve loss signal density. 
+            Corresponding to the one-step diffusion process, we apply a simple full masking strategy to bridge train-test consistency and improve loss signal density. 
             </li>
           </ul>
         </div>
