@@ -45,8 +45,8 @@
   <script>
     MathJax = {
       tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['\\[', '\\]']],
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
         processEscapes: true,
         processEnvironments: true
       },
@@ -521,6 +521,10 @@ function OptanonWrapper() {
   #modelAName a:hover, #modelBName a:hover {
     opacity: 0.8;
   }
+  
+  .last-words-color {
+    color: #ffd54f;
+  }
 </style>
 
 <script>
@@ -529,15 +533,23 @@ function OptanonWrapper() {
   let isStreaming = false;
   let streamingIntervalA = null;
   let streamingIntervalB = null;
+  let speculation_data = [];
 
   // Load streaming data
-  fetch('streaming_data.json')
+  fetch('streaming_data_neo.json')
     .then(response => response.json())
     .then(data => {
       streamingData = data;
       populateQuestions();
     })
     .catch(error => console.error('Error loading streaming data:', error));
+
+  // fetch('decoding_progress_gsm8k_cot.json')
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     speculation_data = data;
+  //   })
+  //   .catch(error => console.error('Error loading decoding progress:', error));
 
   function populateQuestions() {
     const select = document.getElementById('questionSelect');
@@ -649,7 +661,8 @@ function OptanonWrapper() {
     // Calculate streaming parameters
     const maxAnimationTime = Math.max(modelA.animation_time, modelB.animation_time);
     
-    streamModel(modelA, 'A', maxAnimationTime);
+    // streamModel(modelA, 'A', maxAnimationTime);
+    streamSpeculativeModel(modelA, 'A', maxAnimationTime);
     streamModel(modelB, 'B', maxAnimationTime);
   }
 
@@ -695,6 +708,17 @@ function OptanonWrapper() {
     div.textContent = text;
     return div.innerHTML;
   }
+  
+  function formatAcceptedAndDraftText(acceptedText = '', draftText = '') {
+    const acceptedHtml = escapeHtmlButPreserveMath(acceptedText).replace(/\n/g, '<br>');
+    
+    if (!draftText) {
+      return acceptedHtml;
+    }
+    
+    const draftHtml = escapeHtmlButPreserveMath(draftText).replace(/\n/g, '<br>');
+    return `${acceptedHtml}<span class="last-words-color">${draftHtml}</span>`;
+  }
 
   function streamModel(model, modelId, maxAnimationTime) {
     const response = model.response;
@@ -734,6 +758,95 @@ function OptanonWrapper() {
         
         // Convert line breaks to <br> and set innerHTML
         const formattedText = escapeHtmlButPreserveMath(displayText).replace(/\n/g, '<br>');
+        outputElement.innerHTML = formattedText;
+        
+        // Auto-scroll to bottom
+        outputElement.scrollTop = outputElement.scrollHeight;
+        
+        // Update stats - show proportional actual time based on progress
+        const displayTime = actualStreamTime * progress;
+        const displayTokens = Math.floor(totalTokens * progress);
+        timeElement.textContent = displayTime.toFixed(1) + 's';
+        tokensElement.textContent = displayTokens;
+      } else {
+        clearInterval(interval);
+        
+        // First, show the complete text without rendering (for smooth transition)
+        const fullText = response;
+        let displayText;
+        if (fullText.length > MAX_VISIBLE_CHARS) {
+          displayText = '...' + fullText.substring(fullText.length - MAX_VISIBLE_CHARS);
+        } else {
+          displayText = fullText;
+        }
+        const formattedText = escapeHtmlButPreserveMath(displayText).replace(/\n/g, '<br>');
+        outputElement.innerHTML = formattedText;
+        outputElement.scrollTop = outputElement.scrollHeight;
+        
+        // Update final stats
+        timeElement.textContent = actualStreamTime.toFixed(1) + 's';
+        tokensElement.textContent = totalTokens;
+        
+        // Add a small delay before MathJax rendering for smooth transition
+        setTimeout(() => {
+          // Show full text for MathJax rendering
+          const formattedResponse = escapeHtmlButPreserveMath(response).replace(/\n/g, '<br>');
+          outputElement.innerHTML = formattedResponse;
+          
+          // Trigger MathJax to render the math
+          if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([outputElement]).catch((err) => console.error('MathJax error:', err));
+          }
+          
+          outputElement.scrollTop = outputElement.scrollHeight;
+          
+          // Check if both models finished
+          checkBothFinished();
+        }, 200); // Small delay for smooth transition
+      }
+    }, frameInterval);
+    
+    if (modelId === 'A') {
+      streamingIntervalA = interval;
+    } else {
+      streamingIntervalB = interval;
+    }
+  }
+
+  // stream the speculative decoding progress
+  function streamSpeculativeModel(model, modelId, maxAnimationTime) {
+    const response = model.response;
+    const totalTokens = model.total_tokens;
+    const animationTime = model.animation_time;
+    const actualStreamTime = model.actual_stream_time;
+    const decoding_progress = model.speculative_progress;
+
+
+    const outputElement = document.getElementById(`model${modelId}Output`);
+    const timeElement = document.getElementById(`model${modelId}Time`);
+    const tokensElement = document.getElementById(`model${modelId}Tokens`);
+    
+    const MAX_VISIBLE_CHARS = 800; // Maximum characters to display at once
+    const FRAME_RATE = 60; // Updates per second
+    const frameInterval = 1000 / FRAME_RATE;
+    
+    const startTime = Date.now();
+    const endTime = startTime + (animationTime * 1000);
+    
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / (animationTime * 1000), 1);
+      
+      // Calculate current position in text - ensure we reach the full length
+      const currentIndex = Math.floor(progress * decoding_progress.length);
+      
+      if (progress < 1) {
+        const acceptedText = decoding_progress[currentIndex][0];
+        const draftText = decoding_progress[currentIndex][1];
+        
+        // Convert line breaks to <br>, append draft tail, and set innerHTML
+        const formattedText = formatAcceptedAndDraftText(acceptedText, draftText);
         outputElement.innerHTML = formattedText;
         
         // Auto-scroll to bottom
