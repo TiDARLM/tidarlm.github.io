@@ -25,7 +25,7 @@
 
 
   <title>TiDAR: Think in Diffusion, Talk in Autoregression</title>
-  <link rel="icon" type="image/x-icon" href="static/images/climb.png">
+  <link rel="icon" type="image/x-icon" href="https://www.nvidia.com/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
 
@@ -735,13 +735,13 @@ function OptanonWrapper() {
     const modelBNameElement = document.getElementById('modelBName');
     
     if (currentQuestion.model_a.link) {
-      modelANameElement.innerHTML = `<a href="${currentQuestion.model_a.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer;">${currentQuestion.model_a.name}</a>`;
+      modelANameElement.innerHTML = `<a href="${currentQuestion.model_a.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" style="width: 32px; height: 32px; vertical-align: middle;">${currentQuestion.model_a.name}</a>`;
     } else {
       modelANameElement.textContent = currentQuestion.model_a.name;
     }
     
     if (currentQuestion.model_b.link) {
-      modelBNameElement.innerHTML = `<a href="${currentQuestion.model_b.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer;">${currentQuestion.model_b.name}</a>`;
+      modelBNameElement.innerHTML = `<a href="${currentQuestion.model_b.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 1px; height: 32px; display: inline-block;"></span>${currentQuestion.model_b.name}</a>`;
     } else {
       modelBNameElement.textContent = currentQuestion.model_b.name;
     }
