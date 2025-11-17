@@ -405,6 +405,28 @@ function OptanonWrapper() {
           </div>
         </div>
 
+        <!-- Time Scaling Factor Slider -->
+        <div class="field" style="margin-top: 1rem;">
+          <label class="label has-text-black">
+            Display Speed: <span id="timeScalingValue">1.0<span class="multiplier">x</span></span> 
+          </label>
+          <div class="control">
+            <input 
+              type="range" 
+              id="timeScalingSlider" 
+              class="slider is-fullwidth" 
+              min="0.1" 
+              max="1.0" 
+              step="0.1" 
+              value="1.0"
+              style="width: 100%;"
+            >
+            <div class="help has-text-grey" style="margin-top: 0.25rem;">
+              Adjust the time scaling factor to control animation speed (lower = faster, higher = slower)
+            </div>
+          </div>
+        </div>
+
         <!-- Question Display -->
         <div id="questionDisplay" class="box" style="display: none; margin-top: 1.5rem; background-color: rgba(255,255,255,0.95); border-radius: 8px; padding: 1.5rem;">
           <h3 class="title is-5" style="color: #363636; margin-bottom: 1rem;">Question:</h3>
@@ -532,6 +554,64 @@ function OptanonWrapper() {
     text-decoration-thickness: 2px;
     text-underline-offset: 2px;
   }
+
+  /* Time scaling slider styles */
+  #timeScalingSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: #dbdbdb;
+    outline: none;
+    transition: background 0.3s;
+  }
+
+  #timeScalingSlider:hover {
+    background: #c0c0c0;
+  }
+
+  #timeScalingSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3273dc;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  #timeScalingSlider::-webkit-slider-thumb:hover {
+    background: #2366d1;
+    transform: scale(1.1);
+  }
+
+  #timeScalingSlider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3273dc;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  #timeScalingSlider::-moz-range-thumb:hover {
+    background: #2366d1;
+    transform: scale(1.1);
+  }
+
+  #timeScalingValue {
+    font-weight: bold;
+    color: #3273dc;
+    font-size: 1.1em;
+  }
+
+  #timeScalingValue .multiplier {
+    font-size: 0.85em;
+    opacity: 0.8;
+    margin-left: 1px;
+  }
 </style>
 
 <script>
@@ -541,6 +621,7 @@ function OptanonWrapper() {
   let streamingIntervalA = null;
   let streamingIntervalB = null;
   let speculation_data = [];
+  let time_scaling_factor = 1.0; // Default time scaling factor
 
   // Load streaming data
   fetch('streaming_data_neo.json')
@@ -583,7 +664,7 @@ function OptanonWrapper() {
 
   document.getElementById('questionSelect').addEventListener('change', function(e) {
     const questionId = parseInt(e.target.value);
-    if (questionId) {
+    if (!isNaN(questionId)) {
       currentQuestion = streamingData.find(q => q.id === questionId);
       if (currentQuestion) {
         stopStreaming();
@@ -597,6 +678,44 @@ function OptanonWrapper() {
       }
     }
   });
+
+  // Time scaling factor slider event listener
+  // Ensure DOM is ready before setting up the slider
+  function setupTimeScalingSlider() {
+    const timeScalingSlider = document.getElementById('timeScalingSlider');
+    const timeScalingValue = document.getElementById('timeScalingValue');
+    
+    if (timeScalingSlider && timeScalingValue) {
+      timeScalingSlider.addEventListener('input', function(e) {
+        time_scaling_factor = parseFloat(e.target.value);
+        timeScalingValue.innerHTML = time_scaling_factor.toFixed(1) + '<span class="multiplier">x</span>';
+        
+        // If streaming is active, restart with new scaling factor
+        if (isStreaming && currentQuestion) {
+          stopStreaming();
+          // Reset the display
+          document.getElementById('modelAOutput').innerHTML = '';
+          document.getElementById('modelBOutput').innerHTML = '';
+          document.getElementById('modelATime').textContent = '0.0s';
+          document.getElementById('modelBTime').textContent = '0.0s';
+          document.getElementById('modelATokens').textContent = '0';
+          document.getElementById('modelBTokens').textContent = '0';
+          document.getElementById('efficiencySummary').style.display = 'none';
+          // Restart streaming with new scaling factor
+          setTimeout(() => {
+            startStreaming();
+          }, 100);
+        }
+      });
+    }
+  }
+  
+  // Setup slider when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupTimeScalingSlider);
+  } else {
+    setupTimeScalingSlider();
+  }
 
   function displayQuestion() {
     document.getElementById('questionDisplay').style.display = 'block';
@@ -662,15 +781,19 @@ function OptanonWrapper() {
     isStreaming = true;
     document.getElementById('efficiencySummary').style.display = 'none';
 
+    // Parse the current time_scaling_factor from the slider
+    const timeScalingSlider = document.getElementById('timeScalingSlider');
+    const currentTimeScalingFactor = timeScalingSlider ? parseFloat(timeScalingSlider.value) : 1.0;
+
     const modelA = currentQuestion.model_a;
     const modelB = currentQuestion.model_b;
 
     // Calculate streaming parameters
-    const maxAnimationTime = Math.max(modelA.animation_time, modelB.animation_time);
+    const maxAnimationTime = Math.max(modelA.animation_time, modelB.animation_time) / currentTimeScalingFactor;
     
     // streamModel(modelA, 'A', maxAnimationTime);
-    streamSpeculativeModel(modelA, 'A', maxAnimationTime);
-    streamModel(modelB, 'B', maxAnimationTime);
+    streamSpeculativeModel(modelA, 'A', maxAnimationTime, currentTimeScalingFactor);
+    streamModel(modelB, 'B', maxAnimationTime, currentTimeScalingFactor);
   }
 
   function escapeHtmlButPreserveMath(text) {
@@ -727,10 +850,10 @@ function OptanonWrapper() {
     return `${acceptedHtml}<span class="last-words-color">${draftHtml}</span>`;
   }
 
-  function streamModel(model, modelId, maxAnimationTime) {
+  function streamModel(model, modelId, maxAnimationTime, currentTimeScalingFactor) {
     const response = model.response;
     const totalTokens = model.total_tokens;
-    const animationTime = model.animation_time;
+    const animationTime = model.animation_time / currentTimeScalingFactor;
     const actualStreamTime = model.actual_stream_time;
     
     const outputElement = document.getElementById(`model${modelId}Output`);
@@ -821,10 +944,10 @@ function OptanonWrapper() {
   }
 
   // stream the speculative decoding progress
-  function streamSpeculativeModel(model, modelId, maxAnimationTime) {
+  function streamSpeculativeModel(model, modelId, maxAnimationTime, currentTimeScalingFactor) {
     const response = model.response;
     const totalTokens = model.total_tokens;
-    const animationTime = model.animation_time;
+    const animationTime = model.animation_time / currentTimeScalingFactor;
     const actualStreamTime = model.actual_stream_time;
     const decoding_progress = model.speculative_progress;
 
