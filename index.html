@@ -865,11 +865,12 @@ function OptanonWrapper() {
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density by weights reusing but this requires loading more KV cache for each sample and more aggressive model splitting. 
+            The power of modern GPUs gets fully utilized under a balanced load between compute density and memory IO. Increasing batch size can increase the compute density by reusing the model weights, but this requires loading more KV cache for each sample and more aggressive model sharding. 
             <!-- For situations where we care more about per-request latency, w -->
-            We can actually pass in more tokens to the forward with similar latency. Under the context of TiDAR, we pass several mask tokens to perform diffusion drafting and several pre-drafted tokens to perform autoregressive sampling.  
+            It turns out that passing a decent amount of extra tokens to the forward results in similar latency. 
+            Under the context of TiDAR, we append sets of mask tokens to perform diffusion pre-drafting and also verifiying tokens from last step to conduct autoregressive sampling.  
             <!-- Diffusion models can speedup generation exactly from this perspective and we take the extreme route by diffusing multiple sets of proposals.  -->
-            These extra tokens can be computed with almost the same latency, and therefore, we refer to these as "free token slots".
+            When the draft length is chosen wisely, computing these extra tokens in parallel does not introduce extra latency, and therefore, we refer to these as "free token slots".
             </p>
           </div>
         </div>
@@ -896,9 +897,9 @@ function OptanonWrapper() {
           </figure>
           <div class="content has-text-justified mt-4">
             <p>
-            With the help of the customized structured mask, we can verify the proposals from last step as well as pre-draft new proposals starting at every single prefix in a single forward. Similar to speculative decoding, we can guarantee at least one token can be accepted in each forward pass but TiDAR can accept much more tokens due to its superior drafting ability. 
+            With the help of the customized structured mask, we can verify the proposals from last step as well as pre-draft new proposals starting at every single prefix in a single forward. Similar to speculative decoding, we can guarantee at least one token to be accepted in each forward pass but TiDAR can accept much more tokens due to its superior drafting ability. 
             <!-- Plus, we guarantee one token per forward pass, similar to speculative decoding but with more added advantages.  -->
-            Given the right draft length, we can maximally leverage the free token slots and achieve great decoding speedup. 
+            Given the right draft length, we can maximally leverage the free token slots and achieve great decoding speedup from exceptionally high acceptance rate. 
             </p>
           </div>
         </div>
@@ -915,10 +916,10 @@ function OptanonWrapper() {
           <div class="content has-text-justified">
             <ul>
               <li>
-              TiDAR achieves the best inference latency under small batch sizes (better than SOTA speculative decoding such as EAGLE-v3). 
+              TiDAR achieves the best inference latency under small batch sizes (better than SOTA speculative decoding such as <a href="https://arxiv.org/abs/2503.01840" target="_blank">EAGLE-v3</a>). 
               </li>
               <li>
-              TiDAR significantly outperforms the quality-efficiency trade-offs than open-source DLMs such as Dream and Llada.
+              TiDAR significantly outperforms the quality-efficiency trade-offs than open-source DLMs such as <a href="https://arxiv.org/pdf/2508.15487" target="_blank">Dream</a> and <a href="https://arxiv.org/abs/2502.09992" target="_blank">Llada</a>.
               </li>
               <li>
               TiDAR is a standalone model that is easy to train and deploy with minimal hyperparameters to tune and low serving overhead.
@@ -967,7 +968,7 @@ function OptanonWrapper() {
           </div>
           <p>
           We compare TiDAR with AR models (Llama, SmolLM, Qwen) and diffusion models (Dream, Llada, Block Diffusion) on downstream tasks.
-          With only continual pretraining, not only is TiDAR outperforming diffusion models (with the best quality at 1T/NFE) but also matches or significantly close the gap to AR models. 
+          With only continual pretraining, not only does TiDAR outperform diffusion models (with the best quality at 1T/NFE) but also matches or significantly closes the gap to AR models. 
           </p>
         </div>
 
@@ -982,11 +983,11 @@ function OptanonWrapper() {
             Comparing TiDAR's parallel decoding with other popular diffusion denoising strategies (such as threshold-based and left-to-right). 
             </li>
             <li>
-            TiDAR gives the flexibility to verify with either AR or diffusion predictions, we showcase their effects on downstream performance. 
+            TiDAR gives the flexibility to verify with either AR or diffusion (or a mixture of both) predictions, and we showcase their effects on downstream performance. 
             </li>
             <li>
             One of the critical advantages of TiDAR is that we use one-step diffusion for efficient drafting. 
-            Corresponding to the one-step diffusion process, we apply a simple full masking strategy to bridge train-test consistency and improve loss signal density. 
+            To this end, we apply a simple full masking strategy to bridge train-test consistency and improve loss signal density. 
             </li>
           </ul>
         </div>
