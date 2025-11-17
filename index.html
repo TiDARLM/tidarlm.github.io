@@ -408,7 +408,7 @@ function OptanonWrapper() {
         <!-- Time Scaling Factor Slider -->
         <div class="field" style="margin-top: 1rem;">
           <label class="label has-text-black">
-            Display Speed: <span id="timeScalingValue">1.0<span class="multiplier">x</span></span> 
+            Display Speed: <span id="timeScalingValue">1.0<span class="multiplier">x</span></span>  (drag to slow down)
           </label>
           <div class="control">
             <input 
@@ -722,7 +722,7 @@ function OptanonWrapper() {
     
     // Render question text with math support
     const questionElement = document.getElementById('questionText');
-    const formattedQuestion = escapeHtmlButPreserveMath(currentQuestion.question).replace(/\n/g, '<br>');
+    const formattedQuestion = escapeHtmlButPreserveMath(currentQuestion.actual_prompt).replace(/\n/g, '<br>');
     questionElement.innerHTML = formattedQuestion;
     
     // Trigger MathJax to render the math in question
@@ -974,6 +974,7 @@ function OptanonWrapper() {
       if (progress < 1) {
         const acceptedText = decoding_progress[currentIndex][0];
         const draftText = decoding_progress[currentIndex][1];
+        const decodedTokens = decoding_progress[currentIndex][2];
         
         // Convert line breaks to <br>, append draft tail, and set innerHTML
         const formattedText = formatAcceptedAndDraftText(acceptedText, draftText);
@@ -986,7 +987,7 @@ function OptanonWrapper() {
         const displayTime = actualStreamTime * progress;
         const displayTokens = Math.floor(totalTokens * progress);
         timeElement.textContent = displayTime.toFixed(1) + 's';
-        tokensElement.textContent = displayTokens;
+        tokensElement.textContent = decodedTokens;
       } else {
         clearInterval(interval);
         
