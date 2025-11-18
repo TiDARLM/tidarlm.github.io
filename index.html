@@ -387,7 +387,7 @@ function OptanonWrapper() {
 
 <!-- Interactive Streaming Demo Section -->
 <section class="section" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);">
-  <div class="container is-max-desktop">
+  <div class="container is-fluid">
     <div class="columns is-centered">
       <div class="column">
         <h2 class="title is-4 has-text-centered has-text-black" style="margin-bottom: 1.5rem;">
@@ -404,6 +404,8 @@ function OptanonWrapper() {
             </div>
           </div>
         </div>
+
+          
 
         <!-- Time Scaling Factor Slider -->
         <div class="field" style="margin-top: 1rem;">
@@ -428,16 +430,17 @@ function OptanonWrapper() {
         </div>
 
         <!-- Question Display -->
-        <div id="questionDisplay" class="box" style="display: none; margin-top: 1.5rem; background-color: rgba(255,255,255,0.95); border-radius: 8px; padding: 1.5rem;">
+        <div id="questionDisplay" class="box" style="display: none; margin-top: 1.5rem; background-color: rgba(255,255,255,0.95); border-radius: 8px; padding: 0.75rem;">
           <h3 class="title is-5" style="color: #363636; margin-bottom: 1rem;">Question:</h3>
           <p id="questionText" style="font-size: 1.1rem; color: #4a4a4a; margin-bottom: 1.5rem; white-space: pre-wrap;"></p>
 
+
           <!-- Models Comparison -->
-          <div class="columns is-variable is-4">
+          <div class="columns is-variable is-1">
             <!-- Model A -->
-            <div class="column">
-              <div class="box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 400px; position: relative;">
-                <h4 id="modelAName" class="title is-5 has-text-white" style="margin-bottom: 0.75rem;">Model A</h4>
+            <div class="column is-half" style="padding: 0.25rem;">
+              <div class="box" style="background-color: #e8fff0; min-height: 400px; position: relative; padding: 0.5rem;">
+                <h4 id="modelAName" class="title is-5" style="margin-bottom: 0.5rem; color: #2e7d32;">Model A</h4>
                 <div class="model-stats" style="margin-bottom: 1rem;">
                   <div class="tags">
                     <span class="tag is-light is-medium">
@@ -450,14 +453,14 @@ function OptanonWrapper() {
                     </span>
                   </div>
                 </div>
-                <div id="modelAOutput" class="content has-text-white" style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; min-height: 250px; max-height: 250px; overflow-y: auto; overflow-x: hidden; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;"></div>
+                <div id="modelAOutput" class="content" style="background-color: rgba(0,0,0,0.05); color: #1b5e20; padding: 0.5rem; border-radius: 6px; min-height: 250px; max-height: 250px; overflow-y: auto; overflow-x: hidden; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;"></div>
               </div>
             </div>
 
             <!-- Model B -->
-            <div class="column">
-              <div class="box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); min-height: 400px; position: relative;">
-                <h4 id="modelBName" class="title is-5 has-text-white" style="margin-bottom: 0.75rem;">Model B</h4>
+            <div class="column is-half" style="padding: 0.25rem;">
+              <div class="box" style="background-color: #f6e8ff; min-height: 400px; position: relative; padding: 0.5rem;">
+                <h4 id="modelBName" class="title is-5" style="margin-bottom: 0.5rem; color: #6a1b9a;">Model B</h4>
                 <div class="model-stats" style="margin-bottom: 1rem;">
                   <div class="tags">
                     <span class="tag is-light is-medium">
@@ -470,23 +473,43 @@ function OptanonWrapper() {
                     </span>
                   </div>
                 </div>
-                <div id="modelBOutput" class="content has-text-white" style="background-color: rgba(0,0,0,0.2); padding: 1rem; border-radius: 6px; min-height: 250px; max-height: 250px; overflow-y: auto; overflow-x: hidden; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;"></div>
+                <div id="modelBOutput" class="content" style="background-color: rgba(0,0,0,0.05); color: #4a148c; padding: 0.5rem; border-radius: 6px; min-height: 250px; max-height: 250px; overflow-y: auto; overflow-x: hidden; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: pre-wrap;"></div>
               </div>
             </div>
           </div>
 
           <!-- Control Buttons -->
-          <div class="buttons is-centered" style="margin-top: 1rem;">
-            <button id="startButton" class="button is-primary is-small" disabled>
-              <span class="icon is-small"><i class="fas fa-play"></i></span>
-              <span>Start</span>
-            </button>
+          <div class="field is-grouped is-grouped-centered" style="margin-top: 1rem;">
+            <p class="control">
+              <button id="startButton" class="button is-primary is-small" disabled>
+                <span class="icon is-small"><i class="fas fa-play"></i></span>
+                <span>Start</span>
+              </button>
+            </p>
+            <div class="field has-addons" style="margin-left: 1rem;">
+              <p class="control">
+                <button id="manual-control-button" class="button is-info is-small" disabled>
+                  <span class="icon is-small"><i class="fas fa-cogs"></i></span>
+                  <span>Manual</span>
+                </button>
+              </p>
+              <p class="control">
+                <button id="prev-step-button" class="button is-small" disabled>
+                  <span class="icon is-small"><i class="fas fa-chevron-left"></i></span>
+                </button>
+              </p>
+              <p class="control">
+                <button id="next-step-button" class="button is-small" disabled>
+                  <span class="icon is-small"><i class="fas fa-chevron-right"></i></span>
+                </button>
+              </p>
+            </div>
           </div>
 
           <!-- Efficiency Summary -->
           <div id="efficiencySummary" class="notification is-success is-light" style="display: none; margin-top: 0.75rem; padding: 0.75rem 1rem;">
             <p class="has-text-centered" style="margin: 0; font-size: 1.1rem;">
-              <strong>Efficiency Gain:</strong> <span id="efficiencyText"></span>
+              <span id="efficiencyText"></span>
             </p>
           </div>
         </div>
@@ -621,7 +644,10 @@ function OptanonWrapper() {
   let streamingIntervalA = null;
   let streamingIntervalB = null;
   let speculation_data = [];
-  let time_scaling_factor = 1.0; // Default time scaling factor
+    let time_scaling_factor = 1.0; // Default time scaling factor
+  let isManualMode = false;
+  let currentStepA = 0;
+  let currentStepB = 0;
 
   // Load streaming data
   fetch('streaming_data_neo.json')
@@ -667,7 +693,12 @@ function OptanonWrapper() {
     if (!isNaN(questionId)) {
       currentQuestion = streamingData.find(q => q.id === questionId);
       if (currentQuestion) {
-        stopStreaming();
+                stopStreaming();
+        isManualMode = false;
+        document.getElementById('manual-control-button').classList.remove('is-active');
+        document.getElementById('prev-step-button').disabled = true;
+        document.getElementById('next-step-button').disabled = true;
+        document.getElementById('startButton').disabled = false;
         displayQuestion();
         // Automatically start streaming for newly selected question
         setTimeout(() => {
@@ -735,7 +766,7 @@ function OptanonWrapper() {
     const modelBNameElement = document.getElementById('modelBName');
     
     if (currentQuestion.model_a.link) {
-      modelANameElement.innerHTML = `<a href="${currentQuestion.model_a.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" style="width: 32px; height: 32px; vertical-align: middle;">${currentQuestion.model_a.name}</a>`;
+      modelANameElement.innerHTML = `<a href="${currentQuestion.model_a.link}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 1px; height: 32px; display: inline-block;"></span>${currentQuestion.model_a.name}</a>`;
     } else {
       modelANameElement.textContent = currentQuestion.model_a.name;
     }
@@ -755,11 +786,16 @@ function OptanonWrapper() {
     document.getElementById('modelBTokens').textContent = '0';
     document.getElementById('efficiencySummary').style.display = 'none';
     
-    document.getElementById('startButton').disabled = false;
+        document.getElementById('startButton').disabled = false;
+    document.getElementById('manual-control-button').disabled = false;
   }
 
   document.getElementById('startButton').addEventListener('click', function() {
-    if (currentQuestion) {
+      if (currentQuestion) {
+      isManualMode = false;
+      document.getElementById('manual-control-button').classList.remove('is-active');
+      document.getElementById('prev-step-button').disabled = true;
+      document.getElementById('next-step-button').disabled = true;
       // Stop any ongoing streaming
       stopStreaming();
       // Reset the display
@@ -775,9 +811,57 @@ function OptanonWrapper() {
         startStreaming();
       }, 100);
     }
+    });
+
+  document.getElementById('manual-control-button').addEventListener('click', function() {
+    if (currentQuestion) {
+      isManualMode = !isManualMode;
+      if (isManualMode) {
+        stopStreaming();
+        this.classList.add('is-active');
+        document.getElementById('startButton').disabled = true;
+        document.getElementById('prev-step-button').disabled = false;
+        document.getElementById('next-step-button').disabled = false;
+        currentStepA = 0;
+        renderStep('A', 0);
+        const modelB = currentQuestion.model_b;
+        const outputB = document.getElementById('modelBOutput');
+        const timeB = document.getElementById('modelBTime');
+        const tokensB = document.getElementById('modelBTokens');
+        const formattedB = escapeHtmlButPreserveMath(modelB.response).replace(/\n/g, '<br>');
+        outputB.innerHTML = formattedB;
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([outputB]).catch((err) => console.error('MathJax error:', err));
+        }
+        timeB.textContent = modelB.actual_stream_time.toFixed(1) + 's';
+        tokensB.textContent = modelB.total_tokens;
+        updateManualButtons();
+      } else {
+        this.classList.remove('is-active');
+        document.getElementById('startButton').disabled = false;
+        document.getElementById('prev-step-button').disabled = true;
+        document.getElementById('next-step-button').disabled = true;
+        stopStreaming();
+        displayQuestion();
+        setTimeout(() => {
+          if (currentQuestion && !isStreaming) {
+            startStreaming();
+          }
+        }, 100);
+      }
+    }
   });
 
-  function startStreaming() {
+  document.getElementById('next-step-button').addEventListener('click', function() {
+    manualStep(1);
+  });
+
+  document.getElementById('prev-step-button').addEventListener('click', function() {
+    manualStep(-1);
+  });
+
+    function startStreaming() {
+    if (isManualMode) return;
     isStreaming = true;
     document.getElementById('efficiencySummary').style.display = 'none';
 
@@ -1033,16 +1117,24 @@ function OptanonWrapper() {
     }
   }
 
-  function checkBothFinished() {
-    const modelAText = document.getElementById('modelAOutput').textContent;
-    const modelBText = document.getElementById('modelBOutput').textContent;
-    
-    const modelAComplete = modelAText.length >= currentQuestion.model_a.response.length - 5;
-    const modelBComplete = modelBText.length >= currentQuestion.model_b.response.length - 5;
-    
-    if (modelAComplete && modelBComplete) {
-      isStreaming = false;
-      showEfficiencySummary();
+    function checkBothFinished() {
+    if (isManualMode) {
+      const modelA = currentQuestion.model_a;
+      const modelAComplete = currentStepA >= modelA.speculative_progress.length - 1;
+      if (modelAComplete) {
+        showEfficiencySummary();
+      }
+    } else {
+      const modelAText = document.getElementById('modelAOutput').textContent;
+      const modelBText = document.getElementById('modelBOutput').textContent;
+      
+      const modelAComplete = modelAText.length >= currentQuestion.model_a.response.length - 5;
+      const modelBComplete = modelBText.length >= currentQuestion.model_b.response.length - 5;
+      
+      if (modelAComplete && modelBComplete) {
+        isStreaming = false;
+        showEfficiencySummary();
+      }
     }
   }
 
@@ -1050,9 +1142,71 @@ function OptanonWrapper() {
     console.log('Current question:', currentQuestion);
     console.log('Efficiency text:', currentQuestion.efficiency_text);
     
-    const efficiencyText = currentQuestion.efficiency_text || 'Efficiency data not available';
+    const efficiencyText = currentQuestion.efficiency_text || '';
     document.getElementById('efficiencyText').textContent = efficiencyText;
     document.getElementById('efficiencySummary').style.display = 'block';
+  }
+
+    function renderStep(modelId, step) {
+    const model = modelId === 'A' ? currentQuestion.model_a : currentQuestion.model_b;
+    const outputElement = document.getElementById(`model${modelId}Output`);
+    const timeElement = document.getElementById(`model${modelId}Time`);
+    const tokensElement = document.getElementById(`model${modelId}Tokens`);
+
+    if (modelId === 'A') {
+      const decoding_progress = model.speculative_progress;
+      if (step >= 0 && step < decoding_progress.length) {
+        const [acceptedText, draftText, decodedTokens] = decoding_progress[step];
+        const formattedText = formatAcceptedAndDraftText(acceptedText, draftText);
+        outputElement.innerHTML = formattedText;
+        tokensElement.textContent = decodedTokens;
+        const progress = (step + 1) / decoding_progress.length;
+        const displayTime = model.actual_stream_time * progress;
+        timeElement.textContent = displayTime.toFixed(1) + 's';
+      }
+    } else { // Model B
+      const response = model.response;
+      if (step >= 0 && step < response.length) {
+        const displayText = response.substring(0, step + 1);
+        const formattedText = escapeHtmlButPreserveMath(displayText).replace(/\n/g, '<br>');
+        outputElement.innerHTML = formattedText;
+
+        const progress = (step + 1) / response.length;
+        const displayTokens = Math.floor(model.total_tokens * progress);
+        tokensElement.textContent = displayTokens;
+        const displayTime = model.actual_stream_time * progress;
+        timeElement.textContent = displayTime.toFixed(1) + 's';
+      }
+    }
+    outputElement.scrollTop = outputElement.scrollHeight;
+  }
+
+  function manualStep(direction) {
+    if (!isManualMode || !currentQuestion) return;
+
+    const modelA = currentQuestion.model_a;
+
+    let nextStepA = currentStepA + direction;
+    if (nextStepA >= 0 && nextStepA < modelA.speculative_progress.length) {
+      currentStepA = nextStepA;
+    }
+
+    renderStep('A', currentStepA);
+
+    updateManualButtons();
+    checkBothFinished();
+  }
+
+  function updateManualButtons() {
+    if (!isManualMode || !currentQuestion) return;
+
+    const modelA = currentQuestion.model_a;
+
+    const canGoPrev = currentStepA > 0;
+    const canGoNext = currentStepA < modelA.speculative_progress.length - 1;
+
+    document.getElementById('prev-step-button').disabled = !canGoPrev;
+    document.getElementById('next-step-button').disabled = !canGoNext;
   }
 
   function stopStreaming() {
